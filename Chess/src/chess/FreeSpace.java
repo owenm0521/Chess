@@ -4,8 +4,8 @@ public class FreeSpace implements Piece{
 	String name; 
 	String type; 
 	
-	public FreeSpace (int i, int j) {
-		if((j + i) % 2 == 1){
+	public FreeSpace (int row, int col) {
+		if((row + col) % 2 == 1){
 			this.type = "black space"; 
 			this.name = "## "; 
 		}else {

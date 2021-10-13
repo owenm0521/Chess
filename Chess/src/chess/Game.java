@@ -21,27 +21,34 @@ public class Game {
 		board.createBoard(); 
 		board.populateBoard();  
 		board.printBoard(); 
+		start(); 
 		
 	}
 	
 	public void start() {
-		/*
-		 * while(true){
-		 * 		game logic 
-		 * 		checkmate/exit - break 
-		 * }
-		 */
+		white.turn = true; 
+		Scanner sc = new Scanner(System.in); 
+		String source; 
+		String dest; 
+		while(true){
+			 System.out.println(white.turn ? "White's move." : "Black's move."); 
+			 
+			 System.out.println("Piece to move: "); 
+			 source = sc.nextLine().toLowerCase(); 
+			 System.out.println("Destination: "); 
+			 dest = sc.nextLine().toLowerCase(); 
+			 
+			 Character playerTurn = white.turn ? 'w' : 'b'; 
+			 board.move(playerTurn, source, dest); //calls piece check move function 
+			 
+			 white.turn = !white.turn; 
+			 black.turn = !black.turn; 
+			 break; //on checkmate, resignation, draw
+		 }
 		return; 
 	}
 	
-	//takes source,dest from input 
-	public void move(String source, String dest) {
-		//get piece type as pos source
-		//check move
-			//if legal - pass move to board to update board 
-			//if illegal - exception/warning message 
-		
-	}
+	
 	
 	public boolean checkmate_check() {
 		return false; 

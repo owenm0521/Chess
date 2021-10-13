@@ -6,7 +6,7 @@ public class Knight implements Piece {
 	String type = "Knight"; 
 	
 	public Knight (String color) {
-		this.name = "" + color.charAt(0) + type.charAt(0) + " "; 
+		this.name = "" + color.charAt(0) + "N "; 
 	}
 	
 	public String getName() {
