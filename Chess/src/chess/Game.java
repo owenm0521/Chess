@@ -33,13 +33,12 @@ public class Game {
 		while(true){
 			 System.out.println(white.turn ? "White's move." : "Black's move."); 
 			 
-			 System.out.println("Piece to move: "); 
-			 source = sc.nextLine().toLowerCase(); 
-			 System.out.println("Destination: "); 
-			 dest = sc.nextLine().toLowerCase(); 
+			 source = sc.nextLine().toLowerCase();
+			 String current_loc = source.split(" ")[0];
+			 String new_loc = source.split(" ")[1];
 			 
 			 Character playerTurn = white.turn ? 'w' : 'b'; 
-			 board.move(playerTurn, source, dest); //calls piece check move function 
+			 board.move(playerTurn, current_loc, new_loc); //calls piece check move function 
 			 
 			 white.turn = !white.turn; 
 			 black.turn = !black.turn; 

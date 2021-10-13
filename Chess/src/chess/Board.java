@@ -91,7 +91,7 @@ public class Board {
 		
 		//check that source piece corresponds with player piece 
 		if(piece.getName().charAt(0) != playerTurn) {
-			System.out.println("Not ur piece bitch!"); 
+			System.out.println("None of your pieces are on that square; please choose a different move"); 
 			//do something 
 			return; 
 		}
