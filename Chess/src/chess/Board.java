@@ -81,7 +81,7 @@ public class Board {
 	
 	
 	//takes source,dest from input 
-	public void move(Character playerTurn, String s, String d) {
+	public boolean move(Character playerTurn, String s, String d) {
 		//String to point
 		Point source = new Point(s); 
 		Point dest = new Point(d); 
@@ -93,18 +93,23 @@ public class Board {
 		if(piece.getName().charAt(0) != playerTurn) {
 			System.out.println("None of your pieces are on that square; please choose a different move"); 
 			//do something 
-			return; 
+			return false; 
 		}
 		
 		
-		piece.check_move(); // -> conditional, check legality of move by piece type 
+		boolean legal = piece.check_move(source.row, source.col, dest.row, dest.col); // -> conditional, check legality of move by piece type 
 			//if legal - pass move to update board 
+		if(legal) {
 			updateBoard(source, dest);
+		}
 			//if illegal - exception/warning message 
-			
+		else {
+			System.out.println("illegal move");
+			return false;
+		}
 		//print updated board
 		printBoard();
-			
+		return true;
 	}
 	
 	

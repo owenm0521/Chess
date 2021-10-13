@@ -31,6 +31,7 @@ public class Game {
 		String source; 
 		String dest; 
 		while(true){
+			while(true) {
 			 System.out.println(white.turn ? "White's move." : "Black's move."); 
 			 
 			 source = sc.nextLine().toLowerCase();
@@ -38,8 +39,11 @@ public class Game {
 			 String new_loc = source.split(" ")[1];
 			 
 			 Character playerTurn = white.turn ? 'w' : 'b'; 
-			 board.move(playerTurn, current_loc, new_loc); //calls piece check move function 
-			 
+				 boolean turn = board.move(playerTurn, current_loc, new_loc); //calls piece check move function 
+				 if(turn) {
+					 break;
+				 }
+			 }
 			 white.turn = !white.turn; 
 			 black.turn = !black.turn; 
 			 break; //on checkmate, resignation, draw
