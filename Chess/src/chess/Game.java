@@ -35,6 +35,12 @@ public class Game {
 			 System.out.println(white.turn ? "White's move." : "Black's move."); 
 			 
 			 source = sc.nextLine().toLowerCase();
+			 if(source == "draw") {
+				 break;
+			 }
+			 else if (source == "resign") {
+				 break;
+			 }
 			 String current_loc = source.split(" ")[0];
 			 String new_loc = source.split(" ")[1];
 			 
@@ -44,9 +50,15 @@ public class Game {
 					 break;
 				 }
 			 }
+			if(source == "draw") {
+				 break;
+			 }
+			 else if (source == "resign") {
+				 break;
+			 }
 			 white.turn = !white.turn; 
 			 black.turn = !black.turn; 
-			 break; //on checkmate, resignation, draw
+//			 break; on checkmate, resignation, draw
 		 }
 		return; 
 	}
