@@ -31,6 +31,7 @@ public class Board {
 				case 'f': this.col = 5; break; 
 				case 'g': this.col = 6; break; 
 				case 'h': this.col = 7; break; 
+				default: this.col = -1; break; 
 			}
 		}
 		
@@ -86,6 +87,12 @@ public class Board {
 		Point source = new Point(s); 
 		Point dest = new Point(d); 
 		
+		//check piece is on board
+		if(source.row < 0 || source.row > 8 || source.col == -1) {
+			System.out.println("Not on board; please choose a different move");
+			return false; 
+		}
+		
 		//get piece 
 		Piece piece = board[source.row][source.col]; 
 		
@@ -93,6 +100,12 @@ public class Board {
 		if(piece.getName().charAt(0) != playerTurn) {
 			System.out.println("None of your pieces are on that square; please choose a different move"); 
 			//do something 
+			return false; 
+		}
+		
+		//check dest is on board
+		if(dest.row < 0 || dest.row > 8 || dest.col == -1) {
+			System.out.println("Not on board; please choose a different move");
 			return false; 
 		}
 		
@@ -104,7 +117,7 @@ public class Board {
 		}
 			//if illegal - exception/warning message 
 		else {
-			System.out.println("illegal move");
+			System.out.println("Illegal move");
 			return false;
 		}
 		//print updated board

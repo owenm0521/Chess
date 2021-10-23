@@ -16,6 +16,9 @@ public class King implements Piece {
 		return this.type; 
 	}
 	public boolean check_move(int c_row, int c_col, int n_row, int n_col) {
+		if(Math.abs(n_row - c_row) <= 1 && Math.abs(n_col - c_col) <= 1) {
+			return true; 
+		}
 		return false;
 	}
 
