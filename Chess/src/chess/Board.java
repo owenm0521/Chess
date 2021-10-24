@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Scanner;
 
 //game setup 
 public class Board {
@@ -80,6 +81,165 @@ public class Board {
 		}
 	}
 	
+	public boolean checkBoard(Character playerTurn, Point source, Point dest) {
+		Piece sourcePiece = board[source.row][source.col];
+		Piece destPiece = board[dest.row][dest.col];
+		
+		if(destPiece.getName().charAt(0) == playerTurn) {
+			// System.out.println("You already have a piece on that square."); 
+			return false; 
+		}
+		
+		if(sourcePiece.getType().equals("King") || sourcePiece.getType().equals("Knight")) {
+			if(!board[dest.row][dest.col].getType().equals("Free Space")) {
+				if (playerTurn == 'b') {
+					white.pieces.remove(destPiece); 
+				}else {
+					black.pieces.remove(destPiece); 
+				}
+			}
+			return true; 
+		}
+		
+		int row = source.row; 
+		int col = source.col; 
+		
+		boolean moveRight = false; 
+		boolean moveLeft = false; 
+		boolean moveUp = false;
+		boolean moveDown = false; 
+		if(dest.col > source.col) {
+			moveRight = true; 
+		}else {
+			moveLeft = true; 
+		}
+		if(dest.row > source.row) {
+			moveDown = true; 
+		}else {
+			moveUp = true; 
+		}
+		
+		boolean vertical = false; 
+		boolean horizontal = false; 
+		boolean diagonal = false; 
+		if(dest.row == source.row) {
+			horizontal = true; 
+		}else if(dest.col == source.col) {
+			vertical = true; 
+		}else {
+			diagonal = true; 
+		}
+		
+		if(sourcePiece.getType().equals("Pawn")) {
+			if(board[dest.row][dest.col].getType().equals("Free Space")) {
+				if(diagonal) {
+					return false; 
+				}
+			}else {
+				if (playerTurn == 'b') {
+					white.pieces.remove(destPiece); 
+				}else {
+					black.pieces.remove(destPiece); 
+				}
+			}
+			updatePawn(playerTurn, source, dest); 
+			return true; 
+		}
+		
+		if(diagonal) {
+			while(row != dest.row && col != dest.col) {
+				if(moveRight && moveUp) {
+					row--; 
+					col++; 
+				}else if(moveRight && moveDown) {
+					row++; 
+					col++; 
+				}else if(moveLeft && moveUp) {
+					row--; 
+					col--; 
+				}else if(moveLeft && moveDown) {
+					row++; 
+					col--; 
+				}else {
+					return false; 
+				}
+				if(!board[row][col].getType().equals("Free Space")) {
+					return false; 
+				}
+			}
+		}else if(horizontal) {
+			while(col != dest.col) {
+				if(moveRight) {
+					col++; 
+				}else {
+					col--; 
+				}
+				if(!board[row][col].getType().equals("Free Space")) {
+					return false; 
+				}
+			}
+		}else if(vertical) {
+			while(row != dest.row) {
+				if(moveUp) {
+					row--; 
+				}else {
+					row++; 
+				}
+				if(!board[row][col].getType().equals("Free Space")) {
+					return false; 
+				}
+			}
+		}else {
+			return false; 
+		}
+		
+		if(!board[dest.row][dest.col].getType().equals("Free Space")) {
+			if (playerTurn == 'b') {
+				white.pieces.remove(destPiece); 
+			}else {
+				black.pieces.remove(destPiece); 
+			}
+		}
+		return true; 
+	}
+	
+	public void updatePawn(Character playerTurn, Point source, Point dest) {
+		String newPieceType = ""; 
+		Scanner sc = new Scanner(System.in);  
+		if( (playerTurn == 'b' && dest.row == 7) || (playerTurn == 'w' && dest.row == 0) ) {
+			System.out.println("You can replace your pawn with a new piece (Queen, Knight, Rook, Bishop, Pawn). Enter piece type: "); 
+			newPieceType = sc.nextLine().toLowerCase(); 
+			while ( !(newPieceType.equals("queen") || newPieceType.equals("knight") || newPieceType.equals("rook") || 
+					newPieceType.equals("bishop") || newPieceType.equals("pawn")) ) {
+				System.out.println("Invalid choice; please enter a valid piece type: ");
+				newPieceType = sc.nextLine().toLowerCase(); 
+			}
+			sc.close(); 
+		}else {
+			sc.close(); 
+			return; 
+		}
+		Piece piece = null; 
+		String color = playerTurn.toString(); 
+		switch(newPieceType) {
+			case "queen": piece = new Queen(color); break; 
+			case "knight": piece = new Knight(color); break; 
+			case "rook": piece = new Rook(color); break; 
+			case "bishop": piece = new Bishop(color); break; 
+			// case "pawn": piece = new Pawn(color); break; 
+			default: piece = new Pawn(color); break; 
+		}
+		board[dest.row][dest.col] = piece; 
+		if(playerTurn == 'b') {
+			black.pieces.remove(board[source.row][source.col]); 
+			black.pieces.add(piece); 
+		}else {
+			white.pieces.remove(board[source.row][source.col]); 
+			white.pieces.add(piece); 
+		}
+		return; 
+	}
+	
 	
 	//takes source,dest from input 
 	public boolean move(Character playerTurn, String s, String d) {
@@ -110,14 +270,15 @@ public class Board {
 		}
 		
 		
-		boolean legal = piece.check_move(source.row, source.col, dest.row, dest.col); // -> conditional, check legality of move by piece type 
+		boolean pieceLegal = piece.check_move(source.row, source.col, dest.row, dest.col); // -> conditional, check legality of move by piece type
+		boolean boardLegal = checkBoard(playerTurn, source, dest); // -> conditional, check legality of move by availability of board spaces 
 			//if legal - pass move to update board 
-		if(legal) {
+		if(pieceLegal && boardLegal) {
 			updateBoard(source, dest);
 		}
 			//if illegal - exception/warning message 
 		else {
-			System.out.println("Illegal move");
+			System.out.println("Illegal move; please choose a different move");
 			return false;
 		}
 		//print updated board

@@ -5,11 +5,12 @@ public class FreeSpace implements Piece{
 	String type; 
 	
 	public FreeSpace (int row, int col) {
+		this.type = "Free Space"; 
 		if((row + col) % 2 == 1){
-			this.type = "black space"; 
+			//this.type = "black space"; 
 			this.name = "## "; 
 		}else {
-			this.type = "white space"; 
+			//this.type = "white space"; 
 			this.name = "   "; 
 		}
 	}
