@@ -101,8 +101,10 @@ public class Board {
 			return true; 
 		}
 		
-		int row = source.row; 
-		int col = source.col; 
+		int s_row = source.row; 
+		int s_col = source.col; 
+		int d_row = dest.row;
+		int d_col = dest.col; 
 		
 		boolean moveRight = false; 
 		boolean moveLeft = false; 
@@ -175,45 +177,70 @@ public class Board {
 		}
 		
 		if(diagonal) {
-			while(row != dest.row && col != dest.col) {
-				if(moveRight && moveUp) {
-					row--; 
-					col++; 
-				}else if(moveRight && moveDown) {
-					row++; 
-					col++; 
-				}else if(moveLeft && moveUp) {
-					row--; 
-					col--; 
-				}else if(moveLeft && moveDown) {
-					row++; 
-					col--; 
-				}else {
-					return false; 
-				}
-				if(!board[row][col].getType().equals("Free Space")) {
-					return false; 
-				}
+			if(moveRight && moveUp) {
+				d_row++; 
+				d_col--; 
+			}else if(moveRight && moveDown) {
+				d_row--; 
+				d_col--; 
+			}else if(moveLeft && moveUp) {
+				d_row++; 
+				d_col++; 
+			}else if(moveLeft && moveDown) {
+				d_row--; 
+				d_col++; 
+			}else {
+				return false; 
 			}
-		}else if(horizontal) {
-			while(col != dest.col) {
-				if(moveRight) {
-					col++; 
+			while(s_row != d_row && s_col != d_col) {
+				if(moveRight && moveUp) {
+					s_row--; 
+					s_col++; 
+				}else if(moveRight && moveDown) {
+					s_row++; 
+					s_col++; 
+				}else if(moveLeft && moveUp) {
+					s_row--; 
+					s_col--; 
+				}else if(moveLeft && moveDown) {
+					s_row++; 
+					s_col--; 
 				}else {
-					col--; 
+					return false; 
 				}
-				if(!board[row][col].getType().equals("Free Space")) {
+				if(!board[s_row][s_col].getType().equals("Free Space")) {
+					return false; 
+				}
+			}  
+		}else if(horizontal) {
+			if(moveRight) {
+				d_col--; 
+			}else {
+				d_col++; 
+			}
+			while(s_col != d_col) {
+				if(moveRight) {
+					s_col++; 
+				}else {
+					s_col--; 
+				}
+				if(!board[s_row][s_col].getType().equals("Free Space")) {
 					return false; 
 				}
 			}
 		}else if(vertical) {
-			while(row != dest.row) {
+			if(moveUp) {
+				d_row++; 
+			}else {
+				d_row--; 
+			}
+			while(s_row != d_row) {
 				if(moveUp) {
-					row--; 
+					s_row--; 
 				}else {
-					row++; 
+					s_row++; 
 				}
-				if(!board[row][col].getType().equals("Free Space")) {
+				if(!board[s_row][s_col].getType().equals("Free Space")) {
 					return false; 
 				}
 			}
@@ -255,7 +282,6 @@ public class Board {
 			// case "pawn": piece = new Pawn(color); break; 
 			default: piece = new Pawn(color); break; 
 		}
-		board[dest.row][dest.col] = piece; 
 		if(playerTurn == 'b') {
 			black.pieces.remove(board[source.row][source.col]); 
 			black.pieces.add(piece); 
@@ -263,6 +289,7 @@ public class Board {
 			white.pieces.remove(board[source.row][source.col]); 
 			white.pieces.add(piece); 
 		}
+		board[source.row][source.col] = piece; 
 		return; 
 	}
 	
