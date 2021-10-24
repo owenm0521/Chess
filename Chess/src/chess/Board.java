@@ -130,16 +130,44 @@ public class Board {
 			diagonal = true; 
 		}
 		
-		if(sourcePiece.getType().equals("Pawn")) {
+		if(sourcePiece.getType().equals("pawn")) {
 			if(board[dest.row][dest.col].getType().equals("Free Space")) {
 				if(diagonal) {
-					return false; 
+					// If diagonal movement check if the piece on its right or left are pawns
+					if(board[source.row][dest.col].getType().equals("pawn") && board[source.row][dest.col].getColor() != board[source.row][source.col].getColor()) {
+						//check if en passant is legal
+						if(((Pawn) board[source.row][dest.col]).getEnPassant()) {
+							board[source.row][dest.col] = new FreeSpace(source.row, dest.col);
+							if (playerTurn == 'b') {
+								white.pieces.remove(destPiece); 
+							}else {
+								black.pieces.remove(destPiece); 
+							}
+						}
+					//regular capture
+					if(board[dest.row][dest.col].getType().equals("pawn") && board[dest.row][dest.col].getColor() != board[source.row][source.col].getColor()) {
+						if (playerTurn == 'b') {
+							white.pieces.remove(destPiece); 
+						}else {
+							black.pieces.remove(destPiece); 
+						}
+					}
+					}
+					else {
+						return false; 
+					}
 				}
-			}else {
-				if (playerTurn == 'b') {
-					white.pieces.remove(destPiece); 
-				}else {
-					black.pieces.remove(destPiece); 
+			}
+			else {
+				if(diagonal) {
+					if (playerTurn == 'b') {
+						white.pieces.remove(destPiece); 
+					}else {
+						black.pieces.remove(destPiece); 
+					}
+				}
+				else {
+					return false;
 				}
 			}
 			updatePawn(playerTurn, source, dest); 
@@ -214,9 +242,7 @@ public class Board {
 				System.out.println("Invalid choice; please enter a valid piece type: ");
 				newPieceType = sc.nextLine().toLowerCase(); 
 			}
-			sc.close(); 
 		}else {
-			sc.close(); 
 			return; 
 		}
 		Piece piece = null; 
