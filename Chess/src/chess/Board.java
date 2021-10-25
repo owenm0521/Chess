@@ -300,7 +300,7 @@ public class Board {
 		return; 
 	}
 	
-	public boolean check(Character playerTurn) {
+	public boolean check(Piece[][] board, Character playerTurn) {
 		int king_row = 0; 
 		int king_col = 0; 
 		for(int i = 0; i < board.length; i++) {
@@ -312,7 +312,6 @@ public class Board {
 			}
 		}
 		Point dest = new Point(king_row, king_col); 
-		System.out.println(dest.col +','+ dest.row);
 		Piece curr_piece = null; 
 		boolean check = false; 
 		for(int i = 0; i < board.length; i++) {
@@ -363,7 +362,18 @@ public class Board {
 		boolean boardLegal = checkBoard(playerTurn, source, dest); // -> conditional, check legality of move by availability of board spaces 
 			//if legal - pass move to update board 
 		if(pieceLegal && boardLegal) {
-			updateBoard(source, dest);
+			Piece[][] temp = new Piece[board.length][];
+			for(int i = 0; i < temp.length; i++)
+			    temp[i] = board[i].clone();
+			updateBoard(temp, source, dest);
+			boolean checkLegal = !check(temp, playerTurn == 'w' ? 'b':'w'); // check from other players perspective and if they would have a check after the turn
+			if(checkLegal) {
+				updateBoard(board, source, dest);
+			}
+			else {
+				System.out.println("That would leave you in check! try a different move");
+				return false;
+			}
 		}
 			//if illegal - exception/warning message 
 		else {
@@ -372,16 +382,18 @@ public class Board {
 		}
 		//print updated board
 		printBoard();
-		check(playerTurn);
+		check(board, playerTurn);
 		return true;
 	}
 	
 	
 	//takes source, dest from Game.move, updates Game board 
-	public void updateBoard(Point source, Point dest) {
+	public void updateBoard(Piece[][] board, Point source, Point dest) {
 		board[dest.row][dest.col] = board[source.row][source.col]; 
 		board[source.row][source.col] = new FreeSpace(source.row, source.col); 
 		return; 
 	}
+	
+	
 
 }

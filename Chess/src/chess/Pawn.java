@@ -83,7 +83,6 @@ public class Pawn implements Piece {
 			}
 			if (n_row == (c_row + 1)) {
 					num_moves++;
-					System.out.println("subsequent move");
 					return true;
 				}
 			}
