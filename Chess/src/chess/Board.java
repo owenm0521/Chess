@@ -300,15 +300,24 @@ public class Board {
 		return; 
 	}
 	
-	public boolean check(Piece[][] board, Character playerTurn) {
+	public boolean check(Piece[][] board, Character playerTurn, int checkNum) {
+		Character player_to_check; 
+		Character opponent; 
+		if(checkNum == 0) {
+			player_to_check = playerTurn; 
+			opponent = playerTurn == 'w' ? 'b' : 'w'; 
+		}else {
+			player_to_check = playerTurn == 'w' ? 'b' : 'w'; 
+			opponent = playerTurn; 
+		}
 		int king_row = 0; 
 		int king_col = 0; 
 		for(int i = 0; i < board.length; i++) {
 			for(int j = 0; j < board[i].length; j++) {
-				 if(board[i][j].getType().equals("King") && board[i][j].getName().charAt(0) != playerTurn) {
-					 king_row = i; 
-					 king_col = j; 
-				 }
+				if(board[i][j].getType().equals("King") && board[i][j].getName().charAt(0) == player_to_check) {
+					king_row = i; 
+					king_col = j; 
+				}
 			}
 		}
 		Point dest = new Point(king_row, king_col); 
@@ -317,15 +326,14 @@ public class Board {
 		for(int i = 0; i < board.length; i++) {
 			for(int j = 0; j < board[i].length; j++) {
 				curr_piece = board[i][j]; 
-				if(board[i][j].getName().charAt(0) == playerTurn) {
+				if(board[i][j].getName().charAt(0) != player_to_check) {
 					Point source = new Point(i, j); 
-					check = (curr_piece.check_move(source.row, source.col, king_row, king_col) && checkBoard(playerTurn, source, dest));
+					check = (curr_piece.check_move(source.row, source.col, king_row, king_col) && checkBoard(opponent, source, dest)); // playerTurn = !playerTurn
 					if (check) break;
 				}
 			}
 			if (check) break;
 		}
-		if (check) System.out.println("Check!"); 
 		return check; 
 	}
 	
@@ -360,15 +368,28 @@ public class Board {
 		
 		boolean pieceLegal = piece.check_move(source.row, source.col, dest.row, dest.col); // -> conditional, check legality of move by piece type
 		boolean boardLegal = checkBoard(playerTurn, source, dest); // -> conditional, check legality of move by availability of board spaces 
+		int checkNum = 0; // 0 = check if player's move puts themself in check (temp), 1 = check if player's move puts opponent in check (board)
 			//if legal - pass move to update board 
 		if(pieceLegal && boardLegal) {
-			Piece[][] temp = new Piece[board.length][];
-			for(int i = 0; i < temp.length; i++)
-			    temp[i] = board[i].clone();
-			updateBoard(temp, source, dest);
-			boolean checkLegal = !check(temp, playerTurn == 'w' ? 'b':'w'); // check from other players perspective and if they would have a check after the turn
+			
+			//create copy of board 
+			Piece[][] tempBoard = createBoard(); 
+			for(int i = 0; i < tempBoard.length; i++) {
+				for(int j = 0; j < tempBoard[i].length; j++) {
+					 tempBoard[i][j] = board[i][j]; 
+				}
+			}
+			updateBoard(tempBoard, source, dest);
+			
+			/*
+			 * boolean checkLegal = !check(tempBoard, playerTurn == 'w' ? 'b':'w'); // check from other players perspective and if they would have a check after the turn
 			if(checkLegal) {
 				updateBoard(board, source, dest);
+			}
+			*/ 
+			if(!check(tempBoard, playerTurn, checkNum)) {
+				updateBoard(board, source, dest); 
+				checkNum++; 
 			}
 			else {
 				System.out.println("That would leave you in check! try a different move");
@@ -380,9 +401,15 @@ public class Board {
 			System.out.println("Illegal move; please choose a different move");
 			return false;
 		}
+		
 		//print updated board
 		printBoard();
-		check(board, playerTurn);
+		
+		// check if opponent is in check 
+		if(check(board, playerTurn, checkNum)){
+			System.out.println("Check!"); 
+		}
+		
 		return true;
 	}
 	
