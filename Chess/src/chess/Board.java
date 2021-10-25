@@ -293,10 +293,7 @@ public class Board {
 		return; 
 	}
 	
-	public boolean check(Character playerTurn, Point lastPieceMoved) {
-		int curr_piece_row = lastPieceMoved.row; 
-		int curr_piece_col = lastPieceMoved.col; 
-		Piece curr_piece = board[lastPieceMoved.row][lastPieceMoved.col]; 
+	public boolean check(Character playerTurn) {
 		int king_row = 0; 
 		int king_col = 0; 
 		for(int i = 0; i < board.length; i++) {
@@ -307,11 +304,18 @@ public class Board {
 				 }
 			}
 		}
-		if(curr_piece.check_move(curr_piece_row, curr_piece_col, king_row, king_col)) {
-			System.out.println("Check!");
-			return true; 
+		Piece curr_piece = null; 
+		boolean check = false; 
+		for(int i = 0; i < board.length; i++) {
+			for(int j = 0; j < board[i].length; j++) {
+				curr_piece = board[i][j]; 
+				if(board[i][j].getName().charAt(0) == playerTurn) {
+					 check = curr_piece.check_move(i, j, king_row, king_col); 
+				}
+			}
 		}
-		return false; 
+		if (check) System.out.println("Check!"); 
+		return check; 
 	}
 	
 	//takes source,dest from input 
