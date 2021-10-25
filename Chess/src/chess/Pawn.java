@@ -33,7 +33,6 @@ public class Pawn implements Piece {
 	
 	@Override
 	public boolean check_move(int c_row, int c_col, int n_row, int n_col) {
-		System.out.println(getName() + " coordinates:" + "("+ c_row +","+ c_col+"), (" + n_row +","+ n_col+")");
 		if(getColor() == 'w') {
 			if (n_row >= c_row) {
 				return false;

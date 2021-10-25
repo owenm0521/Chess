@@ -35,14 +35,16 @@ public class Game {
 			 System.out.println(white.turn ? "White's move." : "Black's move."); 
 			 
 			 source = sc.nextLine().toLowerCase();
-			 if(source == "draw") {
-				 break;
-			 }
-			 else if (source == "resign") {
+			 
+			 if (source == "resign") {
 				 break;
 			 }
 			 String current_loc = source.split(" ")[0];
 			 String new_loc = source.split(" ")[1];
+			 if(source.split(" ").length == 3 && source.split(" ")[2].trim().toLowerCase().equals("draw?")) {
+				 source = "draw";
+				 break;
+			 }
 			 
 			 Character playerTurn = white.turn ? 'w' : 'b'; 
 				 boolean turn = board.move(playerTurn, current_loc, new_loc); //calls piece check move function 

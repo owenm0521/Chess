@@ -177,7 +177,9 @@ public class Board {
 					return false;
 				}
 			}
-			updatePawn(playerTurn, source, dest); 
+			if(Math.abs(source.row - dest.row) == 1) {
+				updatePawn(playerTurn, source, dest);
+			}
 			return true; 
 		}
 		
@@ -310,7 +312,7 @@ public class Board {
 			}
 		}
 		Point dest = new Point(king_row, king_col); 
-		
+		System.out.println(dest.col +','+ dest.row);
 		Piece curr_piece = null; 
 		boolean check = false; 
 		for(int i = 0; i < board.length; i++) {
@@ -318,9 +320,11 @@ public class Board {
 				curr_piece = board[i][j]; 
 				if(board[i][j].getName().charAt(0) == playerTurn) {
 					Point source = new Point(i, j); 
-					check = (curr_piece.check_move(source.row, source.col, king_row, king_col) && checkBoard(playerTurn, source, dest));  
+					check = (curr_piece.check_move(source.row, source.col, king_row, king_col) && checkBoard(playerTurn, source, dest));
+					if (check) break;
 				}
 			}
+			if (check) break;
 		}
 		if (check) System.out.println("Check!"); 
 		return check; 
@@ -368,6 +372,7 @@ public class Board {
 		}
 		//print updated board
 		printBoard();
+		check(playerTurn);
 		return true;
 	}
 	
