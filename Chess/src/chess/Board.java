@@ -293,6 +293,26 @@ public class Board {
 		return; 
 	}
 	
+	public boolean check(Character playerTurn, Point lastPieceMoved) {
+		int curr_piece_row = lastPieceMoved.row; 
+		int curr_piece_col = lastPieceMoved.col; 
+		Piece curr_piece = board[lastPieceMoved.row][lastPieceMoved.col]; 
+		int king_row = 0; 
+		int king_col = 0; 
+		for(int i = 0; i < board.length; i++) {
+			for(int j = 0; j < board[i].length; j++) {
+				 if(board[i][j].getType().equals("King") && board[i][j].getName().charAt(0) != playerTurn) {
+					 king_row = i; 
+					 king_col = j; 
+				 }
+			}
+		}
+		if(curr_piece.check_move(curr_piece_row, curr_piece_col, king_row, king_col)) {
+			System.out.println("Check!");
+			return true; 
+		}
+		return false; 
+	}
 	
 	//takes source,dest from input 
 	public boolean move(Character playerTurn, String s, String d) {
