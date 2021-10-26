@@ -3,11 +3,15 @@ package chess;
 public class Pawn implements Piece {
 	
 	String name; 
-	String type = "pawn"; 
+	String type = "Pawn"; 
 	String color;
 	
 	int num_moves = 0; 
 	boolean moved2 = false; 
+	
+	public boolean getmoved() {
+		return moved2;
+	}
 	
 	public Pawn (String color) {
 		this.name = "" + color.charAt(0) + type.charAt(0) + " "; 

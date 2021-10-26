@@ -95,16 +95,16 @@ public class Board {
 			return false; 
 		}
 		
-		if(sourcePiece.getType().equals("King") || sourcePiece.getType().equals("Knight")) {
-			if(!board[dest.row][dest.col].getType().equals("Free Space")) {
-				if (playerTurn == 'b') {
-					white.pieces.remove(destPiece); 
-				}else {
-					black.pieces.remove(destPiece); 
-				}
-			}
-			return true; 
-		}
+//		if(sourcePiece.getType().equals("King") || sourcePiece.getType().equals("Knight")) {
+//			if(!board[dest.row][dest.col].getType().equals("Free Space")) {
+//				if (playerTurn == 'b') {
+//					white.pieces.remove(destPiece); 
+//				}else {
+//					black.pieces.remove(destPiece); 
+//				}
+//			}
+//			return true; 
+//		}
 		
 		int s_row = source.row; 
 		int s_col = source.col; 
@@ -137,11 +137,70 @@ public class Board {
 			diagonal = true; 
 		}
 		
-		if(sourcePiece.getType().equals("pawn")) {
+		
+		if(sourcePiece.getType().equals("King")) {
+			if(s_row == 0 && d_row == 0) {
+				if(Math.abs(s_col-d_col) == 2) {
+					if(d_col == 2 ) {
+						if(board[s_row][0].getType().equals("Rook") && board[s_row][0].getmoved()==false) {
+							boolean all_empty = true;
+							for(int i  = 1; i < 4;i++) {
+								if(board[s_row][i].getType().equals("Free Space")){
+									continue;
+								}
+								else {
+									System.out.println(i);
+									all_empty = false;
+									break;
+								}
+							}
+							if(all_empty) {
+								board[s_row][d_col+1] = board[s_row][0];
+								board[s_row][0] = new FreeSpace(s_row, 0);
+								return true;
+							}
+							else {
+								return false;
+							}
+						}
+						else {
+							return false;
+						}
+					}
+					else if(d_col == 6) {
+						if(board[s_row][7].getType().equals("Rook") && board[s_row][7].getmoved()==false) {
+							boolean all_empty = true;
+							for(int i  = 5; i < 7;i++) {
+								if(board[s_row][i].getType().equals("Free Space")){
+									continue;
+								}
+								else {
+									all_empty = false;
+									break;
+								}
+							}
+							if(all_empty) {
+								board[s_row][d_col-1] = board[s_row][0];
+								board[s_row][7] = new FreeSpace(s_row, 7);
+								return true;
+							}
+							else {
+								return false;
+							}
+						}
+						else {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		
+		if(sourcePiece.getType().equals("Pawn")) {
 			if(board[dest.row][dest.col].getType().equals("Free Space")) {
 				if(diagonal) {
 					// If diagonal movement check if the piece on its right or left are pawns
-					if(board[source.row][dest.col].getType().equals("pawn") && board[source.row][dest.col].getColor() != board[source.row][source.col].getColor()) {
+					if(board[source.row][dest.col].getType().equals("Pawn") && board[source.row][dest.col].getColor() != board[source.row][source.col].getColor()) {
 						//check if en passant is legal
 						if(((Pawn) board[source.row][dest.col]).getEnPassant()) {
 							board[source.row][dest.col] = new FreeSpace(source.row, dest.col);
@@ -152,7 +211,7 @@ public class Board {
 							}
 						}
 					//regular capture
-					if(board[dest.row][dest.col].getType().equals("pawn") && board[dest.row][dest.col].getColor() != board[source.row][source.col].getColor()) {
+					if(board[dest.row][dest.col].getColor() != board[source.row][source.col].getColor()) {
 						if (playerTurn == 'b') {
 							white.pieces.remove(destPiece); 
 						}else {
@@ -370,6 +429,7 @@ public class Board {
 		boolean boardLegal = checkBoard(playerTurn, source, dest); // -> conditional, check legality of move by availability of board spaces 
 		int checkNum = 0; // 0 = check if player's move puts themself in check (temp), 1 = check if player's move puts opponent in check (board)
 			//if legal - pass move to update board 
+		System.out.println(pieceLegal + " " + boardLegal);
 		if(pieceLegal && boardLegal) {
 			
 			//create copy of board 

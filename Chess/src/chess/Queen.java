@@ -21,6 +21,10 @@ public class Queen implements Piece {
 		}
 		return false; 
 	}
+	
+	public boolean getmoved() {
+		return false;
+	}
 
 	@Override
 	public char getColor() {

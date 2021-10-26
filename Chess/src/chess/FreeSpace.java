@@ -24,6 +24,9 @@ public class FreeSpace implements Piece{
 	public boolean check_move(int c_row, int c_col, int n_row, int n_col) {
 		return false;
 	}
+	public boolean getmoved() {
+		return false;
+	}
 
 	@Override
 	public char getColor() {
