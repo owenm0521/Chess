@@ -30,6 +30,7 @@ public class Game {
 		Scanner sc = new Scanner(System.in); 
 		String source; 
 		String dest; 
+		boolean checkmate = false;
 		while(true){
 			while(true) {
 			 System.out.println(white.turn ? "White's move." : "Black's move."); 
@@ -51,8 +52,14 @@ public class Game {
 			 }
 			 
 			 Character playerTurn = white.turn ? 'w' : 'b'; 
+			 Character nonplayerTurn = white.turn ? 'b' : 'w'; 
 			 boolean turn = board.move(playerTurn, current_loc, new_loc, promotion); //calls piece check move function 
-				 if(turn) {
+			 	if(turn) {
+			 		if(board.checkmate(nonplayerTurn)) {
+						 System.out.println("Checkmate!");
+						 System.out.println(white.turn ? "White wins!" : "Black wins!."); 
+						 return;
+					 }
 					 break;
 				 }
 			 }

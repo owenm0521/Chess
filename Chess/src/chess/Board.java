@@ -319,7 +319,7 @@ public class Board {
 	}
 	
 	public boolean onBoard(Point p) {
-		if(p.row < 8 || p.row > 7 || p.col < 0 || p.col > 7) {
+		if(p.row < 0 || p.row > 7 || p.col < 0 || p.col > 7) {
 			return false; 
 		}
 		return true; 
@@ -391,7 +391,7 @@ public class Board {
 	public boolean checkmate(Character playerTurn) {
 		boolean checkmate = true; 
 		Piece king = null; 
-		Point kingPos = null; 
+		Point kingPos = new Point(0,0); 
 		ArrayList<Point> kingMoves = new ArrayList<Point>(); 
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++){
@@ -433,28 +433,26 @@ public class Board {
 				return checkmate; 
 			}
 		}
-		
-		 // -> conditional, check legality of move by piece type
 		 
-		
 		Piece checkPiece = null; 
-		Point checkPiecePos = null;
+		Point checkPiecePos = new Point(0, 0);
+		Character opponent = playerTurn == 'w' ? 'b' : 'w'; 
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++){
-				if(board[i][j].getName().charAt(0) != playerTurn) {
+				if(board[i][j].getName().charAt(0) != playerTurn && !board[i][j].getType().equals("Free Space")) {
 					Piece p = board[i][j]; 
 					boolean pieceLegal = p.check_move(i, j, kingPos.row, kingPos.col);
-					boolean boardLegal = checkBoard(board, playerTurn, new Point(i, j), kingPos, "Q");
+					boolean boardLegal = checkBoard(board, opponent, new Point(i, j), kingPos, "Q");
 					if(pieceLegal && boardLegal) {
 						checkPiece = p;
 						checkPiecePos.row = i; 
 						checkPiecePos.col = j; 
 					}
-					
 				}
 			}
 		}
-		if(checkPiece == null || checkPiecePos == null) {
+		
+		if(checkPiece == null) {
 			checkmate = false; 
 			return checkmate; 
 		}
@@ -576,15 +574,6 @@ public class Board {
 		}
 		
 		return checkmate; 
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	}
 	
 	//takes source,dest from input 
