@@ -42,7 +42,6 @@ public class Pawn implements Piece {
 				return false;
 			}
 			if (Math.abs(n_col - c_col) == 1 && c_row - n_row == 1) {
-				System.out.println("white pawn to capture");
 				return true;
 			}
 			else {
@@ -68,7 +67,6 @@ public class Pawn implements Piece {
 				return false;
 			}
 			if (Math.abs(n_col - c_col) == 1 && n_row - c_row == 1) {
-				System.out.println("black pawn to capture");
 				return true;
 			}
 			if (n_col < c_col || n_col > c_col) {
