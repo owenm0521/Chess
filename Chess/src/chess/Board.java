@@ -369,8 +369,8 @@ public class Board {
 		for(int i = 0; i < board.length; i++) {
 			for(int j = 0; j < board[i].length; j++) {
 				curr_piece = board[i][j]; 
-				if(board[i][j].getName().charAt(0) != player_to_check) {
-					Point source = new Point(i, j); 
+				if(board[i][j].getName().charAt(0) != player_to_check && !board[i][j].getType().equals("Free Space")) {
+					Point source = new Point(i, j);
 					check = (curr_piece.check_move(source.row, source.col, king_row, king_col) && checkBoard(board, opponent, source, dest, "Q")); // playerTurn = !playerTurn
 					if (check) break;
 				}
