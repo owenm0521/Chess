@@ -42,25 +42,25 @@ public class Pawn implements Piece {
 				return false;
 			}
 			if (Math.abs(n_col - c_col) == 1 && c_row - n_row == 1) {
-				System.out.println("white pawn to capture");
+				num_moves++;
 				return true;
 			}
 			else {
-			if (n_row == (c_row - 2)) {
-				if(num_moves == 0) {
-					num_moves++;
-					moved2 = true;
-					return true;
+				if (n_row == (c_row - 2)) {
+					if(num_moves == 0) {
+						num_moves++;
+						moved2 = true;
+						return true;
+					}
+					else {
+						return false;
+					}
 				}
-				else {
-					return false;
+				if (n_row == (c_row - 1) && c_col == n_col) {
+						num_moves++;
+						return true;
+					}
 				}
-			}
-			if (n_row == (c_row - 1)) {
-					num_moves++;
-					return true;
-				}
-			}
 			return false;
 	}
 		else {
@@ -68,7 +68,6 @@ public class Pawn implements Piece {
 				return false;
 			}
 			if (Math.abs(n_col - c_col) == 1 && n_row - c_row == 1) {
-				System.out.println("black pawn to capture");
 				return true;
 			}
 			if (n_col < c_col || n_col > c_col) {
@@ -85,7 +84,7 @@ public class Pawn implements Piece {
 					return false;
 				}
 			}
-			if (n_row == (c_row + 1)) {
+			if (n_row == (c_row + 1) && c_col == n_col) {
 					num_moves++;
 					return true;
 				}

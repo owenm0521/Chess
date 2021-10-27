@@ -35,6 +35,7 @@ public class Game {
 			 System.out.println(white.turn ? "White's move." : "Black's move."); 
 			 
 			 source = sc.nextLine().toLowerCase();
+			 String promotion = "Q";
 			 
 			 if (source == "resign") {
 				 break;
@@ -45,9 +46,12 @@ public class Game {
 				 source = "draw";
 				 break;
 			 }
+			 else if(source.split(" ").length == 3 && source.split(" ")[2].trim().length() == 1) {
+				 promotion = source.split(" ")[2];
+			 }
 			 
 			 Character playerTurn = white.turn ? 'w' : 'b'; 
-				 boolean turn = board.move(playerTurn, current_loc, new_loc); //calls piece check move function 
+			 boolean turn = board.move(playerTurn, current_loc, new_loc, promotion); //calls piece check move function 
 				 if(turn) {
 					 break;
 				 }

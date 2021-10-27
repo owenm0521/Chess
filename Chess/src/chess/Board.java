@@ -87,7 +87,7 @@ public class Board {
 		}
 	}
 	
-	public boolean checkBoard(Piece[][] board, Character playerTurn, Point source, Point dest) {
+	public boolean checkBoard(Piece[][] board, Character playerTurn, Point source, Point dest, String promotion) {
 		Piece sourcePiece = board[source.row][source.col];
 		Piece destPiece = board[dest.row][dest.col];
 		
@@ -150,7 +150,6 @@ public class Board {
 									continue;
 								}
 								else {
-									System.out.println(i);
 									all_empty = false;
 									break;
 								}
@@ -211,14 +210,6 @@ public class Board {
 								black.pieces.remove(destPiece); 
 							}
 						}
-					//regular capture
-					if(board[dest.row][dest.col].getColor() != board[source.row][source.col].getColor()) {
-						if (playerTurn == 'b') {
-							white.pieces.remove(destPiece); 
-						}else {
-							black.pieces.remove(destPiece); 
-						}
-					}
 					}
 					else {
 						return false; 
@@ -226,7 +217,7 @@ public class Board {
 				}
 			}
 			else {
-				if(diagonal) {
+				if(diagonal && Math.abs(source.row - dest.row) == 1) {
 					if (playerTurn == 'b') {
 						white.pieces.remove(destPiece); 
 					}else {
@@ -238,7 +229,9 @@ public class Board {
 				}
 			}
 			if(Math.abs(source.row - dest.row) == 1) {
-				updatePawn(playerTurn, source, dest);
+				if(!board[dest.row][dest.col].getType().equals("King")) {
+					updatePawn(playerTurn, source, dest, promotion);
+				}
 			}
 			return true; 
 		}
@@ -332,29 +325,20 @@ public class Board {
 		return true; 
 	}
 	
-	public void updatePawn(Character playerTurn, Point source, Point dest) {
-		String newPieceType = ""; 
-		Scanner sc = new Scanner(System.in);  
+	public void updatePawn(Character playerTurn, Point source, Point dest, String promotion) {
+		String newPieceType = promotion;
 		if( (playerTurn == 'b' && dest.row == 7) || (playerTurn == 'w' && dest.row == 0) ) {
-			System.out.println("You can replace your pawn with a new piece (Queen, Knight, Rook, Bishop, Pawn). Enter piece type: "); 
-			newPieceType = sc.nextLine().toLowerCase(); 
-			while ( !(newPieceType.equals("queen") || newPieceType.equals("knight") || newPieceType.equals("rook") || 
-					newPieceType.equals("bishop") || newPieceType.equals("pawn")) ) {
-				System.out.println("Invalid choice; please enter a valid piece type: ");
-				newPieceType = sc.nextLine().toLowerCase(); 
-			}
-		}else {
-			return; 
 		}
+		else {return;}
 		Piece piece = null; 
 		String color = playerTurn.toString(); 
 		switch(newPieceType) {
-			case "queen": piece = new Queen(color); break; 
-			case "knight": piece = new Knight(color); break; 
-			case "rook": piece = new Rook(color); break; 
-			case "bishop": piece = new Bishop(color); break; 
+			case "Q": piece = new Queen(color); break; 
+			case "N": piece = new Knight(color); break; 
+			case "R": piece = new Rook(color); break; 
+			case "B": piece = new Bishop(color); break; 
 			// case "pawn": piece = new Pawn(color); break; 
-			default: piece = new Pawn(color); break; 
+			default: piece = new Queen(color); break; 
 		}
 		if(playerTurn == 'b') {
 			black.pieces.remove(board[source.row][source.col]); 
@@ -393,9 +377,9 @@ public class Board {
 		for(int i = 0; i < board.length; i++) {
 			for(int j = 0; j < board[i].length; j++) {
 				curr_piece = board[i][j]; 
-				if(board[i][j].getName().charAt(0) != player_to_check) {
-					Point source = new Point(i, j); 
-					check = (curr_piece.check_move(source.row, source.col, king_row, king_col) && checkBoard(board, opponent, source, dest)); // playerTurn = !playerTurn
+				if(board[i][j].getName().charAt(0) != player_to_check && !board[i][j].getType().equals("Free Space")) {
+					Point source = new Point(i, j);
+					check = (curr_piece.check_move(source.row, source.col, king_row, king_col) && checkBoard(board, opponent, source, dest, "Q")); // playerTurn = !playerTurn
 					if (check) break;
 				}
 			}
@@ -460,7 +444,7 @@ public class Board {
 				if(board[i][j].getName().charAt(0) != playerTurn) {
 					Piece p = board[i][j]; 
 					boolean pieceLegal = p.check_move(i, j, kingPos.row, kingPos.col);
-					boolean boardLegal = checkBoard(board, playerTurn, new Point(i, j), kingPos);
+					boolean boardLegal = checkBoard(board, playerTurn, new Point(i, j), kingPos, "Q");
 					if(pieceLegal && boardLegal) {
 						checkPiece = p;
 						checkPiecePos.row = i; 
@@ -581,7 +565,7 @@ public class Board {
 					Piece p = board[i][j]; 
 					for(Point move : movesToBlock) {
 						boolean pieceLegal = p.check_move(i, j, move.row, move.col);
-						boolean boardLegal = checkBoard(board, playerTurn, new Point(i, j), move);
+						boolean boardLegal = checkBoard(board, playerTurn, new Point(i, j), move, "Q");
 						if(pieceLegal && boardLegal) {
 							checkmate = false; 
 							return checkmate;  
@@ -604,7 +588,7 @@ public class Board {
 	}
 	
 	//takes source,dest from input 
-	public boolean move(Character playerTurn, String s, String d) {
+	public boolean move(Character playerTurn, String s, String d, String promotion) {
 		//String to point
 		Point source = new Point(s); 
 		Point dest = new Point(d); 
@@ -633,10 +617,9 @@ public class Board {
 		
 		
 		boolean pieceLegal = piece.check_move(source.row, source.col, dest.row, dest.col); // -> conditional, check legality of move by piece type
-		boolean boardLegal = checkBoard(board, playerTurn, source, dest); // -> conditional, check legality of move by availability of board spaces 
+		boolean boardLegal = checkBoard(board, playerTurn, source, dest, promotion); // -> conditional, check legality of move by availability of board spaces 
 		int checkNum = 0; // 0 = check if player's move puts themself in check (temp), 1 = check if player's move puts opponent in check (board)
 			//if legal - pass move to update board 
-		System.out.println(pieceLegal + " " + boardLegal);
 		if(pieceLegal && boardLegal) {
 			
 			//create copy of board 
