@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 //game setup 
@@ -324,6 +325,13 @@ public class Board {
 		return true; 
 	}
 	
+	public boolean onBoard(Point p) {
+		if(p.row < 8 || p.row > 7 || p.col < 0 || p.col > 7) {
+			return false; 
+		}
+		return true; 
+	}
+	
 	public void updatePawn(Character playerTurn, Point source, Point dest) {
 		String newPieceType = ""; 
 		Scanner sc = new Scanner(System.in);  
@@ -396,6 +404,205 @@ public class Board {
 		return check; 
 	}
 	
+	public boolean checkmate(Character playerTurn) {
+		boolean checkmate = true; 
+		Piece king = null; 
+		Point kingPos = null; 
+		ArrayList<Point> kingMoves = new ArrayList<Point>(); 
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++){
+				if(board[i][j].getType().equals("King") && board[i][j].getName().charAt(0) == playerTurn) {
+					king = board[i][j]; 
+					kingPos.row = i; 
+					kingPos.col = j; 
+				}
+			}
+		}
+		
+		ArrayList<Point> possibleMoves = new ArrayList<Point>(); 
+		possibleMoves.add(new Point(kingPos.row, kingPos.col + 1)); 
+		possibleMoves.add(new Point(kingPos.row, kingPos.col - 1));
+		possibleMoves.add(new Point(kingPos.row + 1, kingPos.col));
+		possibleMoves.add(new Point(kingPos.row - 1, kingPos.col));
+		possibleMoves.add(new Point(kingPos.row + 1, kingPos.col + 1));
+		possibleMoves.add(new Point(kingPos.row + 1, kingPos.col - 1));
+		possibleMoves.add(new Point(kingPos.row - 1, kingPos.col + 1));
+		possibleMoves.add(new Point(kingPos.row - 1, kingPos.col - 1));
+		for(Point move : possibleMoves) {
+			if (onBoard(move) && 
+					( board[move.row][move.col].getType().equals("Free Space") || board[move.row][move.col].getName().charAt(0) != playerTurn ) ){
+				kingMoves.add(move); 
+			}
+		}
+		
+		int checkNum = 0; 
+		for (Point move : kingMoves) {
+			Piece[][] tempBoard = createBoard(); 
+			for(int i = 0; i < tempBoard.length; i++) {
+				for(int j = 0; j < tempBoard[i].length; j++) {
+					 tempBoard[i][j] = board[i][j]; 
+				}
+			}
+			tempBoard = updateBoard(tempBoard, kingPos, move);
+			if(!check(tempBoard, playerTurn, checkNum)) {
+				checkmate = false; 
+				return checkmate; 
+			}
+		}
+		
+		 // -> conditional, check legality of move by piece type
+		 
+		
+		Piece checkPiece = null; 
+		Point checkPiecePos = null;
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++){
+				if(board[i][j].getName().charAt(0) != playerTurn) {
+					Piece p = board[i][j]; 
+					boolean pieceLegal = p.check_move(i, j, kingPos.row, kingPos.col);
+					boolean boardLegal = checkBoard(board, playerTurn, new Point(i, j), kingPos);
+					if(pieceLegal && boardLegal) {
+						checkPiece = p;
+						checkPiecePos.row = i; 
+						checkPiecePos.col = j; 
+					}
+					
+				}
+			}
+		}
+		if(checkPiece == null || checkPiecePos == null) {
+			checkmate = false; 
+			return checkmate; 
+		}
+		
+		boolean moveRight = false; 
+		boolean moveLeft = false; 
+		boolean moveUp = false;
+		boolean moveDown = false; 
+		if(kingPos.col > checkPiecePos.col) {
+			moveRight = true; 
+		}else {
+			moveLeft = true; 
+		}
+		if(kingPos.row > checkPiecePos.row) {
+			moveDown = true; 
+		}else {
+			moveUp = true; 
+		}
+		
+		boolean vertical = false; 
+		boolean horizontal = false; 
+		boolean diagonal = false; 
+		boolean knight = false; 
+		if(kingPos.row == checkPiecePos.row) {
+			horizontal = true; 
+		}else if(kingPos.col == checkPiecePos.col) {
+			vertical = true; 
+		}else {
+			diagonal = true; 
+		}
+		if (!vertical && !horizontal && !diagonal) {
+			knight = true; 
+		}
+		
+		ArrayList<Point> movesToBlock = new ArrayList<Point>(); 
+		int sourceRow = checkPiecePos.row; 
+		int sourceCol = checkPiecePos.col;
+		int destRow = kingPos.row; 
+		int destCol = kingPos.col; 
+		
+		movesToBlock.add(new Point(sourceRow, sourceCol)); 
+		if(diagonal) {
+			if(moveRight && moveUp) {
+				destRow++; 
+				destCol--; 
+			}else if(moveRight && moveDown) {
+				destRow--; 
+				destCol--; 
+			}else if(moveLeft && moveUp) {
+				destRow++; 
+				destCol++; 
+			}else if(moveLeft && moveDown) {
+				destRow--; 
+				destCol++; 
+			}else {
+			}
+			while(sourceRow != destRow && sourceCol != destCol) {
+				if(moveRight && moveUp) {
+					sourceRow--; 
+					sourceCol++; 
+				}else if(moveRight && moveDown) {
+					sourceRow++; 
+					sourceCol++; 
+				}else if(moveLeft && moveUp) {
+					sourceRow--; 
+					sourceCol--; 
+				}else if(moveLeft && moveDown) {
+					sourceRow++; 
+					sourceCol--; 
+				}else {
+				}
+				movesToBlock.add(new Point(sourceRow, sourceCol)); 	
+			}  
+		}else if(horizontal) {
+			if(moveRight) {
+				destCol--; 
+			}else {
+				destCol++; 
+			}
+			while(sourceCol != destCol) {
+				if(moveRight) {
+					sourceCol++; 
+				}else {
+					sourceCol--; 
+				}
+				movesToBlock.add(new Point(sourceRow, sourceCol)); 	
+			}
+		}else if(vertical) {
+			if(moveUp) {
+				destRow++; 
+			}else {
+				destRow--; 
+			}
+			while(sourceRow != destRow) {
+				if(moveUp) {
+					sourceRow--; 
+				}else {
+					sourceRow++; 
+				}
+				movesToBlock.add(new Point(sourceRow, sourceCol)); 	
+			}
+		}else {
+		}
+		
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++){
+				if(board[i][j].getName().charAt(0) == playerTurn && !board[i][j].getType().equals("King")) {
+					Piece p = board[i][j]; 
+					for(Point move : movesToBlock) {
+						boolean pieceLegal = p.check_move(i, j, move.row, move.col);
+						boolean boardLegal = checkBoard(board, playerTurn, new Point(i, j), move);
+						if(pieceLegal && boardLegal) {
+							checkmate = false; 
+							return checkmate;  
+						}
+					}
+				}
+			}
+		}
+		
+		return checkmate; 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+	
 	//takes source,dest from input 
 	public boolean move(Character playerTurn, String s, String d) {
 		//String to point
@@ -439,7 +646,7 @@ public class Board {
 					 tempBoard[i][j] = board[i][j]; 
 				}
 			}
-			updateBoard(tempBoard, source, dest);
+			tempBoard = updateBoard(tempBoard, source, dest);
 			
 			/*
 			 * boolean checkLegal = !check(tempBoard, playerTurn == 'w' ? 'b':'w'); // check from other players perspective and if they would have a check after the turn
@@ -448,7 +655,7 @@ public class Board {
 			}
 			*/ 
 			if(!check(tempBoard, playerTurn, checkNum)) {
-				updateBoard(board, source, dest); 
+				board = updateBoard(board, source, dest); 
 				checkNum++; 
 			}
 			else {
@@ -475,10 +682,10 @@ public class Board {
 	
 	
 	//takes source, dest from Game.move, updates Game board 
-	public void updateBoard(Piece[][] board, Point source, Point dest) {
+	public Piece[][] updateBoard(Piece[][] board, Point source, Point dest) {
 		board[dest.row][dest.col] = board[source.row][source.col]; 
 		board[source.row][source.col] = new FreeSpace(source.row, source.col); 
-		return; 
+		return board; 
 	}
 	
 	
