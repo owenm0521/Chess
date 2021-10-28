@@ -31,6 +31,8 @@ public class Game {
 		String source; 
 		String dest; 
 		boolean checkmate = false;
+		boolean draw = false; 
+		boolean resign = false; 
 		while(true){
 			while(true) {
 			 System.out.println(white.turn ? "White's move." : "Black's move."); 
@@ -39,12 +41,14 @@ public class Game {
 			 String promotion = "Q";
 			 
 			 if (source == "resign") {
+				 resign = true; 
 				 break;
 			 }
 			 String current_loc = source.split(" ")[0];
 			 String new_loc = source.split(" ")[1];
 			 if(source.split(" ").length == 3 && source.split(" ")[2].trim().toLowerCase().equals("draw?")) {
 				 source = "draw";
+				 draw = true; 
 				 break;
 			 }
 			 else if(source.split(" ").length == 3 && source.split(" ")[2].trim().length() == 1) {
@@ -56,8 +60,8 @@ public class Game {
 			 boolean turn = board.move(playerTurn, current_loc, new_loc, promotion); //calls piece check move function 
 			 	if(turn) {
 			 		if(board.checkmate(nonplayerTurn)) {
-						 System.out.println("Checkmate!");
-						 System.out.println(white.turn ? "White wins!" : "Black wins!."); 
+			 			 System.out.println("Checkmate!");
+						 System.out.println(white.turn ? "White wins!" : "Black wins!.");
 						 return;
 					 }
 					 break;
@@ -73,13 +77,13 @@ public class Game {
 			 black.turn = !black.turn; 
 //			 break; on checkmate, resignation, draw
 		 }
+		if(draw) {
+			System.out.println("draw"); 
+		}
+		if(resign) {
+			System.out.println(white.turn ? "Black wins!" : "White wins!."); 
+		}
 		return; 
-	}
-	
-	
-	
-	public boolean checkmate_check() {
-		return false; 
 	}
 	
 	
