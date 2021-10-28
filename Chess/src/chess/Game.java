@@ -1,23 +1,36 @@
+/**
+ * @author Ali Khan and Owen Morris
+ */
 package chess;
 
 import java.util.Scanner;
 
-//game logic 
+/**
+ *  
+ * Game class creates all objects for chess and plays the game
+ *
+ */
 public class Game {
 	
+	/**
+	 * white is the white player
+	 * black is the black player
+	 * board is the board of the game
+	 */
 	Player white = new Player("white"); 
 	Player black = new Player("black"); 
 	Board board = new Board(white, black); 
 	
-	
-	
+
 	public void newGame() {
 		board.createBoard(); 
 		board.populateBoard();  
 		board.printBoard(); 
 		start(); 
 	}
-	
+	/**
+	 * runs the game and scans for move input/draw offer/resignation
+	 */
 	public void start() {
 		white.turn = true; 
 		Scanner sc = new Scanner(System.in); 
