@@ -92,20 +92,8 @@ public class Board {
 		Piece destPiece = board[dest.row][dest.col];
 		
 		if(destPiece.getName().charAt(0) == playerTurn) {
-			// System.out.println("You already have a piece on that square."); 
 			return false; 
 		}
-		
-//		if(sourcePiece.getType().equals("King") || sourcePiece.getType().equals("Knight")) {
-//			if(!board[dest.row][dest.col].getType().equals("Free Space")) {
-//				if (playerTurn == 'b') {
-//					white.pieces.remove(destPiece); 
-//				}else {
-//					black.pieces.remove(destPiece); 
-//				}
-//			}
-//			return true; 
-//		}
 		
 		int s_row = source.row; 
 		int s_col = source.col; 
@@ -584,7 +572,7 @@ public class Board {
 		
 		//check piece is on board
 		if(source.row < 0 || source.row > 8 || source.col == -1) {
-			System.out.println("Not on board; please choose a different move");
+			System.out.println("Illegal move, try again");
 			return false; 
 		}
 		
@@ -593,14 +581,13 @@ public class Board {
 		
 		//check that source piece corresponds with player piece 
 		if(piece.getName().charAt(0) != playerTurn) {
-			System.out.println("None of your pieces are on that square; please choose a different move"); 
-			//do something 
+			System.out.println("Illegal move, try again"); 
 			return false; 
 		}
 		
 		//check dest is on board
 		if(dest.row < 0 || dest.row > 8 || dest.col == -1) {
-			System.out.println("Not on board; please choose a different move");
+			System.out.println("Illegal move, try again");
 			return false; 
 		}
 		
@@ -625,13 +612,13 @@ public class Board {
 				checkNum++; 
 			}
 			else {
-				System.out.println("That would leave you in check! try a different move");
+				System.out.println("Illegal move, try again");
 				return false;
 			}
 		}
 			//if illegal - exception/warning message 
 		else {
-			System.out.println("Illegal move; please choose a different move");
+			System.out.println("Illegal move, try again");
 			return false;
 		}
 		
@@ -640,7 +627,7 @@ public class Board {
 		
 		// check if opponent is in check 
 		if(check(board, playerTurn, checkNum) && !checkmate(playerTurn == 'w' ? 'b' : 'w')){
-			System.out.println("Check!"); 
+			System.out.println("Check"); 
 		}
 		
 		return true;

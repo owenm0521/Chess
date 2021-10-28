@@ -23,17 +23,10 @@ public class Game {
 	
 
 	public void newGame() {
-		Scanner sc = new Scanner(System.in); 
-		System.out.print("Start new game? ");
-		String str = sc.nextLine().toLowerCase(); 
-		if(!(str.equals("yes") || str.equals("y"))) {
-			return; 
-		}
 		board.createBoard(); 
 		board.populateBoard();  
 		board.printBoard(); 
 		start(); 
-		
 	}
 	/**
 	 * runs the game and scans for move input/draw offer/resignation
@@ -48,7 +41,7 @@ public class Game {
 		boolean resign = false; 
 		while(true){
 			while(true) {
-			 System.out.println(white.turn ? "White's move." : "Black's move."); 
+			 System.out.print(white.turn ? "White's move: " : "Black's move: "); 
 			 
 			 source = sc.nextLine().toLowerCase();
 			 String promotion = "Q";
@@ -73,8 +66,8 @@ public class Game {
 			 boolean turn = board.move(playerTurn, current_loc, new_loc, promotion); //calls piece check move function 
 			 	if(turn) {
 			 		if(board.checkmate(nonplayerTurn)) {
-			 			 System.out.println("Checkmate!");
-						 System.out.println(white.turn ? "White wins!" : "Black wins!.");
+			 			 System.out.println("Checkmate");
+						 System.out.println(white.turn ? "White wins" : "Black wins");
 						 return;
 					 }
 					 break;
@@ -94,7 +87,7 @@ public class Game {
 			System.out.println("draw"); 
 		}
 		if(resign) {
-			System.out.println(white.turn ? "Black wins!" : "White wins!."); 
+			System.out.println(white.turn ? "Black wins" : "White wins"); 
 		}
 		return; 
 	}

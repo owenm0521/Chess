@@ -10,7 +10,7 @@ package chess;
 public class Driver {
 
 	/**
-	 * creates the game
+	 * create game
 	 * @param args
 	 */
 	public static void main(String[] args) {
