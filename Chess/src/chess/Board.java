@@ -620,12 +620,6 @@ public class Board {
 			}
 			tempBoard = updateBoard(tempBoard, source, dest);
 			
-			/*
-			 * boolean checkLegal = !check(tempBoard, playerTurn == 'w' ? 'b':'w'); // check from other players perspective and if they would have a check after the turn
-			if(checkLegal) {
-				updateBoard(board, source, dest);
-			}
-			*/ 
 			if(!check(tempBoard, playerTurn, checkNum)) {
 				board = updateBoard(board, source, dest); 
 				checkNum++; 
@@ -645,7 +639,7 @@ public class Board {
 		printBoard();
 		
 		// check if opponent is in check 
-		if(check(board, playerTurn, checkNum)){
+		if(check(board, playerTurn, checkNum) && !checkmate(playerTurn == 'w' ? 'b' : 'w')){
 			System.out.println("Check!"); 
 		}
 		
