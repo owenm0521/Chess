@@ -40,7 +40,7 @@ public class Game {
 			 source = sc.nextLine().toLowerCase();
 			 String promotion = "Q";
 			 
-			 if (source == "resign") {
+			 if (source.equals("resign")) {
 				 resign = true; 
 				 break;
 			 }
@@ -67,10 +67,10 @@ public class Game {
 					 break;
 				 }
 			 }
-			if(source == "draw") {
+			if(source.equals("draw")) {
 				 break;
 			 }
-			 else if (source == "resign") {
+			 else if (source.equals("resign")) {
 				 break;
 			 }
 			 white.turn = !white.turn; 
