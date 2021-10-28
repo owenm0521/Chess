@@ -633,7 +633,6 @@ public class Board {
 		return true;
 	}
 	
-	
 	//takes source, dest from Game.move, updates Game board 
 	public Piece[][] updateBoard(Piece[][] board, Point source, Point dest) {
 		board[dest.row][dest.col] = board[source.row][source.col]; 
