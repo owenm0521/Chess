@@ -1,26 +1,52 @@
+/**
+ * @author Ali Khan and Owen Morris
+ */
 package chess;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
-//game setup 
+/**
+ * 
+ *board handles all logic between pieces and game logic
+ *
+ */
 public class Board {
-	
+	/**
+	 * uses players black and white for each side
+	 * board is a 2d array where the pieces can move 
+	 */
 	Player white; 
 	Player black; 
 	Piece[][] board; 
-	
+	/**
+	 * Constructs the board for the game to begin
+	 * 
+	 * @param white white player
+	 * @param black black player
+	 */
 	public Board(Player white, Player black) {
 		this.white = white; this.black = black; 
 		this.board = this.createBoard(); 
 		
 	}
 	
+	/*
+	 * Point allows for easy conversion for array indices to chess moves
+	 */
 	public class Point {
 		
 		int row; 
 		int col; 
+		/**
+		 * row represents first array (y)
+		 * col represents index within array (x)
+		 */
 		
+		/**
+		 * creates the graph equivalent point
+		 * @param gridPoint the board location as string
+		 */
 		public Point (String gridPoint) {
 			this.row = 8 - Character.getNumericValue(gridPoint.charAt(1)); 
 			char c = gridPoint.charAt(0); 
@@ -37,6 +63,11 @@ public class Board {
 			}
 		}
 		
+		/**
+		 * 
+		 * @param row row index (y)
+		 * @param col columns index (x)
+		 */
 		public Point(int row, int col) {
 			this.row = row; 
 			this.col = col; 
@@ -44,6 +75,10 @@ public class Board {
 		
 	}
 	
+	/**
+	 * creates the board by adding freespace to entire array
+	 * @return 2d piece array
+	 */
 	public Piece[][] createBoard() {
 		Piece[][] board = new Piece[8][8]; 
 		for(int i = 0; i < 8; i++) {
@@ -54,6 +89,9 @@ public class Board {
 		return board; 
 	}
 	
+	/**
+	 * prints out board with whatever is on it and one empty line above
+	 */
 	public void printBoard() {
 		System.out.println(); 
 		for(int i = 0; i < board.length; i++) {
@@ -65,6 +103,9 @@ public class Board {
 		System.out.print(" a  b  c  d  e  f  g  h \n\n");
 	}
 	
+	/**
+	 * adds each players initial peices
+	 */
 	public void populateBoard() {
 		int bi = 1; int bj = 0;  
 		for(Piece piece : black.pieces) {
@@ -87,6 +128,16 @@ public class Board {
 		}
 	}
 	
+	/**
+	 * checks the legality of a move within the context of the board, available spaces, and other pieces
+	 * 
+	 * @param board 2d piece array
+	 * @param playerTurn either w or b representing white's turn or black's turn respectively
+	 * @param source original location of piece
+	 * @param dest potential new location of piece
+	 * @param promotion pawns potential promotion as a string which if not provided is defaulted to Queen
+	 * @return true if move is legal or false if not
+	 */
 	public boolean checkBoard(Piece[][] board, Character playerTurn, Point source, Point dest, String promotion) {
 		Piece sourcePiece = board[source.row][source.col];
 		Piece destPiece = board[dest.row][dest.col];
@@ -306,6 +357,11 @@ public class Board {
 		return true; 
 	}
 	
+	/**
+	 * checks is given point is within the bounds of board array
+	 * @param p point that has coordinates (x,y) to be checked
+	 * @return true if within bounds of board otherwise false
+	 */
 	public boolean onBoard(Point p) {
 		if(p.row < 0 || p.row > 7 || p.col < 0 || p.col > 7) {
 			return false; 
@@ -313,6 +369,15 @@ public class Board {
 		return true; 
 	}
 	
+	/**
+	 * Once pawn reaches end of the board this method promotes the pawn to a higher piece class
+	 * Defaults to Queen if no promotion string is provided
+	 * 
+	 * @param playerTurn 'w' or 'b' signifying player turn as white or black respectively
+	 * @param source original location of pawn
+	 * @param dest future location of pawn
+	 * @param promotion the promotion string should be 'N' 'R' 'B' or 'Q' depending on promotion type
+	 */
 	public void updatePawn(Character playerTurn, Point source, Point dest, String promotion) {
 		String newPieceType = promotion;
 		if( (playerTurn == 'b' && dest.row == 7) || (playerTurn == 'w' && dest.row == 0) ) {
@@ -339,6 +404,15 @@ public class Board {
 		return; 
 	}
 	
+	/**
+	 * when checknum is 0, checks to see if player's move will put themself in check before allowing move to be completed; 
+	 * when cheknum is 1, checks to see if player's move, once completed, will put opponent in check 
+	 * 
+	 * @param board 2d piece array representing the board
+	 * @param playerTurn 'w' or 'b' representing white or blacks turn respectively
+	 * @param checkNum 0 = check if player's move puts themself in check (temp), 1 = check if player's move puts opponent in check (board)
+	 * @return when checknum is 0 returns true if player's own king is in check, when checknum is 1 returns true if opponent's king is in check
+	 */
 	public boolean check(Piece[][] board, Character playerTurn, int checkNum) {
 		Character player_to_check; 
 		Character opponent; 
@@ -376,6 +450,11 @@ public class Board {
 		return check; 
 	}
 	
+	/**runs after turn to see if opponent is now in checkmate
+	 * 
+	 * @param playerTurn 'w' or 'b' representing white or black's turn respectively
+	 * @return true if you are in checkmate and false if not
+	 */
 	public boolean checkmate(Character playerTurn) {
 		boolean checkmate = true; 
 		Piece king = null; 
@@ -564,7 +643,17 @@ public class Board {
 		return checkmate; 
 	}
 	
-	//takes source,dest from input 
+	/**
+	 * First checks if move is legal by bounds, your piece, and new locaition is on board.
+	 * Then checks if it is legal by piece, board legality, and then checks for checks.
+	 * Finally prints updated board or throws "Illegal move, try again"
+	 * 
+	 * @param playerTurn
+	 * @param s
+	 * @param d
+	 * @param promotion
+	 * @return
+	 */
 	public boolean move(Character playerTurn, String s, String d, String promotion) {
 		//String to point
 		Point source = new Point(s); 
@@ -633,7 +722,13 @@ public class Board {
 		return true;
 	}
 	
-	//takes source, dest from Game.move, updates Game board 
+	/**
+	 * updates given board with new move
+	 * @param board 2d piece array
+	 * @param source original location of piece
+	 * @param dest new location to move piece
+	 * @return updated board(2d piece array)
+	 */
 	public Piece[][] updateBoard(Piece[][] board, Point source, Point dest) {
 		board[dest.row][dest.col] = board[source.row][source.col]; 
 		board[source.row][source.col] = new FreeSpace(source.row, source.col); 

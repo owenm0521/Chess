@@ -11,7 +11,7 @@ public class Driver {
 
 	/**
 	 * create game
-	 * @param args
+	 * @param args not used in our code
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

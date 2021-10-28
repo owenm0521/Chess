@@ -81,7 +81,6 @@ public class Game {
 			 }
 			 white.turn = !white.turn; 
 			 black.turn = !black.turn; 
-//			 break; on checkmate, resignation, draw
 		 }
 		if(draw) {
 			System.out.println("draw"); 
